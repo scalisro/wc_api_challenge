@@ -54,5 +54,6 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     </div>
     <footer>
     </footer>
+    <script src="/js/products.js"></script>
 </body>
 </html>
