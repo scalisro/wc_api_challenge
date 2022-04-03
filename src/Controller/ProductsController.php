@@ -108,15 +108,19 @@ class ProductsController extends AppController
     /**
      * Function to get all products from API Woocommerce.
      *
-     * @return \Cake\Http\Response|null Redirects 
+     * @return \Cake\Http\Response|null Redirects
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function getAllProducts()
     {
+        $url = 'https://wp-challenge.ecomexperts.com/';
+        $consumerKey = 'ck_6af9f99c9b577623f83ec48477c96df2c3d19a28';
+        $consumerSecret = 'cs_04bdf34c565ab88b8a3f6eda89eb842ddebc9960';
+
         $woocommerce = new Client(
-            'https://wp-challenge.ecomexperts.com/',
-            'ck_6af9f99c9b577623f83ec48477c96df2c3d19a28',
-            'cs_04bdf34c565ab88b8a3f6eda89eb842ddebc9960',
+            $url,
+            $consumerKey,
+            $consumerSecret,
             [
                 'version' => 'wc/v2',
             ]
@@ -144,8 +148,54 @@ class ProductsController extends AppController
                 }
             }
         }
+
         $this->Flash->success(__('Lista de productos cargada con exito.'));
 
         return $this->redirect($this->referer());
     }
+
+    /**
+     *  Function to save a file .csv on server and download by browser a file.csv copy.
+     * @return \Cake\Http\Response|null Redirects
+     */
+    public function downloadExport()
+    {
+        $stamp = time();
+        $allProducts = $this->Products->getAllProductsSaved();
+
+        $data = [];
+        $data[0] = [ 'sku', 'Nombre del producto', 'Descripción', 'Cantidad', 'Precio', 'status' ];
+            foreach ($allProducts as $product) {
+                $data[] = [
+                    $product->sku,
+                    $product->title,
+                    $product->description,
+                    $product->inventory_quantity,
+                    $product->price,
+                    $product->status,
+                ];
+            }
+
+        $fileName = 'webroot/products/csv/export_'.$stamp.'.csv';
+        $fp = fopen( $fileName, 'w');
+
+        foreach ($data as $fields) {
+            fputcsv($fp, $fields);
+        }
+
+        fclose($fp);
+
+		$_serialize = 'data';
+        $delimiter = ',';
+        $enclosure = '"';
+        $newline = '\r\n';
+        $_dataEncoding = 'UTF-8';
+
+        $this->response->download('export_'.$stamp.'.csv');
+
+        $this->set(compact('data', '_serialize', 'delimiter', 'enclosure', 'newline', '_dataEncoding'));
+		$this->viewBuilder()->className('CsvView.Csv');
+
+		return;
+	}
 }

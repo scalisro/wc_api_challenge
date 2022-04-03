@@ -97,4 +97,26 @@ class ProductsTable extends Table
 
         return $query;
     }
+
+    /**
+     * Function to find all products.
+     *
+     * @param int|null $prodcutId product ID.
+     * @return Object Query
+     */
+    public function getAllProductsSaved()
+    {
+        $query = $this->find()
+                            ->select([
+                                'sku',
+                                'title',
+                                'description',
+                                'inventory_quantity',
+                                'price',
+                                'status'
+                            ])
+                            ->toArray();
+
+        return $query;
+    }
 }

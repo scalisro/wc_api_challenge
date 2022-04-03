@@ -8,7 +8,7 @@
     <ul class="side-nav">
         <li class="heading"><?= __('Acciones') ?></li>
         <li><?= $this->Html->link(__('Consultar productos a Tienda'), ['controller'=>'Products', 'action' => 'getAllProducts']) ?></li>
-        <li><?= $this->Html->link(__('Exportar a CSV'), ['controller'=>'Pages', 'action' => 'home']) ?></li>
+        <li><?= $this->Html->link(__('Exportar y descargar en CSV'), ['controller'=>'Products', 'action' => 'downloadExport']) ?></li>
         <li><?= $this->Html->link(__('Volver a Home'), ['controller'=>'Pages', 'action' => 'home']) ?></li>
     </ul>
 </nav>
