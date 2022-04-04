@@ -1,7 +1,7 @@
 # Ecomexperts Challenge
 
 Modulo para consultar los productos en la tienda https://wp-challenge.ecomexperts.com/
-Creado en CakePhp 3.x Documentación https://book.cakephp.org/3/en/index.html
+Creado en CakePhp 3.x Documentación https://book.cakephp.org/3/en/index.html. PHP version 5.6 o superior.
 Esta aplicacion permite listar los productos consultados a la Woo Rest API, persistirlos en una base de datos mysql.
 
 ##Instalacion
@@ -11,6 +11,25 @@ Esta aplicacion permite listar los productos consultados a la Woo Rest API, pers
 3.  Ejecutar en consola en el directorio clonado el comando `composer install`
 4. Crear base de datos local Mysql, crear un usuario de base de datso con todos los privilegios
 5. Ingregar al directorio del proyecto config/ y si no existe crear un archivo app_local.php y settear los valores de conexion a la base de datos creada previamente.
+
+# Ejemplo
+```bash
+  'Datasources' => [
+          'default' => [
+              'className' => 'Cake\Database\Connection',
+              'driver' => 'Cake\Database\Driver\Mysql',
+              'persistent' => false,
+              'host' => '127.0.0.1',
+              'username' => 'user_name',
+              'password' => 'my_secret',
+              'database' => 'databese_name',
+              'encoding' => 'utf8mb4',
+              'timezone' => 'UTC',
+              'cacheMetadata' => true,
+          ],
+      ],
+
+```
 
 ## Lanzar aplicacion
 
