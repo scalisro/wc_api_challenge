@@ -3,7 +3,8 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Automattic\WooCommerce\Client;
-
+use Cake\Filesystem\Folder;
+use Cake\Filesystem\File;
 /**
  * Products Controller
  *
@@ -158,13 +159,14 @@ class ProductsController extends AppController
      *  Function to save a file .csv on server and download by browser a file.csv copy.
      * @return \Cake\Http\Response|null Redirects
      */
-    public function downloadExport()
+    public function export()
     {
         $stamp = time();
         $allProducts = $this->Products->getAllProductsSaved();
 
         $data = [];
         $data[0] = [ 'sku', 'Nombre del producto', 'Descripción', 'Cantidad', 'Precio', 'status' ];
+        if(!empty($allProducts)){
             foreach ($allProducts as $product) {
                 $data[] = [
                     $product->sku,
@@ -176,26 +178,68 @@ class ProductsController extends AppController
                 ];
             }
 
-        $fileName = 'webroot/products/csv/export_'.$stamp.'.csv';
-        $fp = fopen( $fileName, 'w');
+            $fileName = 'webroot/products/csv/export_'.$stamp.'.csv';
+            $fp = fopen( $fileName, 'w');
 
-        foreach ($data as $fields) {
-            fputcsv($fp, $fields);
+            foreach ($data as $fields) {
+                fputcsv($fp, $fields);
+            }
+
+            fclose($fp);
+        }else{
+            $this->Flash->error(__('No se hay datos para procesar un archivo CSV.'));
         }
 
-        fclose($fp);
-
-		$_serialize = 'data';
-        $delimiter = ',';
-        $enclosure = '"';
-        $newline = '\r\n';
-        $_dataEncoding = 'UTF-8';
-
-        $this->response->download('export_'.$stamp.'.csv');
-
-        $this->set(compact('data', '_serialize', 'delimiter', 'enclosure', 'newline', '_dataEncoding'));
-		$this->viewBuilder()->className('CsvView.Csv');
-
-		return;
+        return $this->redirect(['action' => 'exportView']);
 	}
+
+    /**
+     * Function to render a view to exports files.
+     * @return \Cake\Http\Response|null Redirects
+     */
+    public function exportView(){
+
+        $dir = new Folder('webroot/products/csv');
+        $files = $dir->find('.*\.csv');
+        $this->set(compact('files'));
+    }
+
+    /**
+     * Function to delete a file csv from server.
+     * @return \Cake\Http\Response|null Redirects
+     */
+    public function deleteCsvFile( $cvsFileId = null ){
+
+        $dir = new Folder('webroot/products/csv');
+        $files = $dir->find('.*\.csv');
+
+        foreach ($files as $key => $file) {
+            debug( $file );
+            if($file == $cvsFileId){
+                $file = new File($dir->pwd() . DS . $file);
+                $file->delete();
+                $this->Flash->success(__('Eliminado con exito.'));
+                return $this->redirect($this->referer());
+            }
+        }
+        $this->Flash->error(__('Se produjo un error al intentar borrar el archivo.'));
+        return $this->redirect($this->referer());
+    }
+
+    /**
+     * Function to download a file csv.
+     * @return \Cake\Http\Response|null Redirects
+     */
+    public function downloadCsvFile( $file = null )
+    {
+        $this->autoRender = false;
+        $ruta = 'webroot/products/csv/'.$file;
+        $this->response->file(
+            $ruta,
+            ['download' => true, 'name' => $file]
+        );
+        $this->response->download($file);
+
+        return $this->response;
+    }
 }
