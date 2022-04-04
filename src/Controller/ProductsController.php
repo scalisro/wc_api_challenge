@@ -127,8 +127,10 @@ class ProductsController extends AppController
             ]
         );
 
+        $parameters = ['per_page' => '100'];
+
         // Endpoints method.
-        $results = $woocommerce->get('products');
+        $results = $woocommerce->get('products', $parameters);
 
         foreach ($results as $key => $result) {
 
@@ -161,7 +163,8 @@ class ProductsController extends AppController
      */
     public function export()
     {
-        $stamp = time();
+        date_default_timezone_set('America/Buenos_Aires');
+        $stamp = date('Y_m_d_H_i_s', time());
         $allProducts = $this->Products->getAllProductsSaved();
 
         $data = [];
