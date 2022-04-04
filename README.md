@@ -11,6 +11,7 @@ Esta aplicacion permite listar los productos consultados a la Woo Rest API, pers
 3.  Ejecutar en consola en el directorio clonado el comando `composer install`
 4. Crear base de datos local Mysql, crear un usuario de base de datso con todos los privilegios
 5. Ingregar al directorio del proyecto config/ y si no existe crear un archivo app_local.php y settear los valores de conexion a la base de datos creada previamente.
+6. Se adjunta en el proyecto una copia de la estructura de base de datos en el directorio raiz en la `database/wc_challenge.sql`.
 
 # Ejemplo
 ```bash
