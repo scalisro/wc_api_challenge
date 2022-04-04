@@ -178,7 +178,14 @@ class ProductsController extends AppController
                 ];
             }
 
-            $fileName = 'webroot/products/csv/export_'.$stamp.'.csv';
+            $csvFolderPath = WWW_ROOT.'products'.DS.'csv'.DS;
+
+            if(!is_dir($csvFolderPath)){
+              $csvFolderPath = new Folder($csvFolderPath, true, 0775);
+              $csvFolderPath = $csvFolderPath->path;
+            }
+
+            $fileName = $csvFolderPath.'export_'.$stamp.'.csv';
             $fp = fopen( $fileName, 'w');
 
             foreach ($data as $fields) {
